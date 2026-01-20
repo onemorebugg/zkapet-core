@@ -19,7 +19,8 @@ export interface LandedCostItem {
  */
 export declare function calculateLandedCostAllocation(lines: StockLineInput[], landedCosts: LandedCostItem[]): StockLineInput[];
 export interface FairShareRule {
-    unitCost: number;
+    allocationMethod: 'quantity' | 'value';
+    allocationRate: number;
     remainingAmount: number;
 }
 /**

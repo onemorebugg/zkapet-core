@@ -71,7 +71,8 @@ export function calculateLandedCostAllocation(lines: StockLineInput[], landedCos
 }
 
 export interface FairShareRule {
-    unitCost: number;
+    allocationMethod: 'quantity' | 'value';
+    allocationRate: number; // Unit Cost (quantity) OR Percentage (value)
     remainingAmount: number;
 }
 
@@ -84,20 +85,32 @@ export function calculateFairShareAllocation(lines: StockLineInput[], rule: Fair
 
     if (rule.remainingAmount <= 0) return { lines: resultLines, totalAllocated: 0 };
 
-    // Pass 1: Calculate total needed
+    // Pass 1: Calculate total needed for this batch based on method
     let totalNeeded = 0;
     for (const line of resultLines) {
-        totalNeeded += (line.qty * rule.unitCost);
+        if (rule.allocationMethod === 'value') {
+            const lineValue = (line.price || 0) * line.qty;
+            totalNeeded += (lineValue * rule.allocationRate);
+        } else {
+            // Default: Quantity
+            totalNeeded += (line.qty * rule.allocationRate);
+        }
     }
 
     if (totalNeeded === 0) return { lines: resultLines, totalAllocated: 0 };
 
-    // Calculate Factor
+    // Calculate Factor (Fair Share)
     const factor = Math.min(1, rule.remainingAmount / totalNeeded);
 
     // Pass 2: Apply
     for (const line of resultLines) {
-        const needed = line.qty * rule.unitCost;
+        let needed = 0;
+        if (rule.allocationMethod === 'value') {
+            needed = ((line.price || 0) * line.qty) * rule.allocationRate;
+        } else {
+            needed = line.qty * rule.allocationRate;
+        }
+
         const allocated = needed * factor;
         
         if (allocated > 0) {
