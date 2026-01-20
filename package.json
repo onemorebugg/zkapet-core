@@ -9,10 +9,15 @@
     "watch": "tsc -w",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": ["zkapet", "erp", "shared"],
+  "keywords": [
+    "zkapet",
+    "erp",
+    "shared"
+  ],
   "author": "Zkapet Team",
   "license": "ISC",
   "devDependencies": {
-    "typescript": "^5.0.0"
+    "typescript": "^5.0.0",
+    "vitest": "^4.0.17"
   }
 }
