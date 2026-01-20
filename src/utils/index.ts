@@ -1,6 +1,5 @@
 export * from './tax';
 export * from './shipping';
-
-export const formatCurrency = (amount: number) => {
-    return amount.toLocaleString('vi-VN') + ' đ';
-};
+export * from './permissions';
+export * from './currency';
+export * from './inventory';

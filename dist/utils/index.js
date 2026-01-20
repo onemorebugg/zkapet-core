@@ -14,10 +14,8 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
     for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.formatCurrency = void 0;
 __exportStar(require("./tax"), exports);
 __exportStar(require("./shipping"), exports);
-const formatCurrency = (amount) => {
-    return amount.toLocaleString('vi-VN') + ' đ';
-};
-exports.formatCurrency = formatCurrency;
+__exportStar(require("./permissions"), exports);
+__exportStar(require("./currency"), exports);
+__exportStar(require("./inventory"), exports);
