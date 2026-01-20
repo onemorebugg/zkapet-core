@@ -69,3 +69,42 @@ export function calculateLandedCostAllocation(lines: StockLineInput[], landedCos
 
     return resultLines;
 }
+
+export interface FairShareRule {
+    unitCost: number;
+    remainingAmount: number;
+}
+
+/**
+ * Phân bổ chi phí theo nguyên tắc Fair Share (Chia đều ngân sách thiếu hụt)
+ */
+export function calculateFairShareAllocation(lines: StockLineInput[], rule: FairShareRule): { lines: StockLineInput[], totalAllocated: number } {
+    const resultLines = lines.map(l => ({ ...l })); // Clone
+    let totalAllocated = 0;
+
+    if (rule.remainingAmount <= 0) return { lines: resultLines, totalAllocated: 0 };
+
+    // Pass 1: Calculate total needed
+    let totalNeeded = 0;
+    for (const line of resultLines) {
+        totalNeeded += (line.qty * rule.unitCost);
+    }
+
+    if (totalNeeded === 0) return { lines: resultLines, totalAllocated: 0 };
+
+    // Calculate Factor
+    const factor = Math.min(1, rule.remainingAmount / totalNeeded);
+
+    // Pass 2: Apply
+    for (const line of resultLines) {
+        const needed = line.qty * rule.unitCost;
+        const allocated = needed * factor;
+        
+        if (allocated > 0) {
+            line.additionalCost = (line.additionalCost || 0) + (allocated / line.qty);
+            totalAllocated += allocated;
+        }
+    }
+
+    return { lines: resultLines, totalAllocated };
+}
