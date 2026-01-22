@@ -102,8 +102,8 @@ export const calculateShippingFeeCore = (
         let isMinFeeApplied = false;
 
         if (config.method === 'region_parcel') {
-            const standardMass = config.parcelLimit || 30;
-            const threshold = config.roundThreshold || standardMass;
+            const standardMass = Number(config.parcelLimit || 30);
+            const threshold = Number(config.roundThreshold || standardMass);
 
             fullParcels = Math.floor(mass / standardMass);
             remainder = mass % standardMass;
@@ -113,7 +113,9 @@ export const calculateShippingFeeCore = (
             if (remainder > 0) {
                 if (remainder >= threshold) {
                     additionalFull = 1;
+                    partialParcels = 0;
                 } else {
+                    additionalFull = 0;
                     partialParcels = 1;
                 }
             }

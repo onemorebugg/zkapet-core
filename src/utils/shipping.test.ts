@@ -89,5 +89,14 @@ describe('Shipping Calculation Logic', () => {
         // 1 Full (30) + 1 Rounded Full (26) = 2 * 50k = 100k
         expect(result3.shippingFee).toBe(100000);
         expect(result3.packageCount).toBe(2);
+        expect(result3.detail[0].fullParcels).toBe(2);
+        expect(result3.detail[0].partialParcels).toBe(0);
+
+        // Case 4: Real world bug case (56.25kg, threshold 25)
+        const items4: ShippingItem[] = [{ massKg: 56.25, quantity: 1 }];
+        const result4 = calculateShippingFeeCore(config, priceConfigs, items4, 'R1');
+        expect(result4.detail[0].fullParcels).toBe(2);
+        expect(result4.detail[0].partialParcels).toBe(0);
+        expect(result4.shippingFee).toBe(100000); // 2 * 50k
     });
 });
