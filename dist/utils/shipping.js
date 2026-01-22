@@ -44,6 +44,7 @@ const calculateShippingFeeCore = (config, priceConfigs, items, regionId) => {
         let fee = 0;
         let count = 0;
         let fullParcels = 0;
+        let partialParcels = 0;
         let remainder = 0;
         let isMinFeeApplied = false;
         if (config.method === 'region_parcel') {
@@ -52,7 +53,6 @@ const calculateShippingFeeCore = (config, priceConfigs, items, regionId) => {
             fullParcels = Math.floor(mass / standardMass);
             remainder = mass % standardMass;
             let additionalFull = 0;
-            let partialParcels = 0;
             if (remainder > 0) {
                 if (remainder >= threshold) {
                     additionalFull = 1;
@@ -88,6 +88,7 @@ const calculateShippingFeeCore = (config, priceConfigs, items, regionId) => {
             count,
             fee,
             fullParcels,
+            partialParcels,
             remainder,
             isMinFeeApplied
         });

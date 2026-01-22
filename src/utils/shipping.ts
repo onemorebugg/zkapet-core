@@ -27,6 +27,7 @@ export interface ShippingDetail {
     count: number;
     fee: number;
     fullParcels?: number;
+    partialParcels?: number;
     remainder?: number;
     isMinFeeApplied?: boolean;
 }
@@ -96,6 +97,7 @@ export const calculateShippingFeeCore = (
         let fee = 0;
         let count = 0;
         let fullParcels = 0;
+        let partialParcels = 0;
         let remainder = 0;
         let isMinFeeApplied = false;
 
@@ -107,7 +109,6 @@ export const calculateShippingFeeCore = (
             remainder = mass % standardMass;
 
             let additionalFull = 0;
-            let partialParcels = 0;
 
             if (remainder > 0) {
                 if (remainder >= threshold) {
@@ -145,6 +146,7 @@ export const calculateShippingFeeCore = (
             count,
             fee,
             fullParcels,
+            partialParcels,
             remainder,
             isMinFeeApplied
         });

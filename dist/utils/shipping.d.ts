@@ -24,6 +24,7 @@ export interface ShippingDetail {
     count: number;
     fee: number;
     fullParcels?: number;
+    partialParcels?: number;
     remainder?: number;
     isMinFeeApplied?: boolean;
 }
