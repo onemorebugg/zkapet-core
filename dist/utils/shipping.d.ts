@@ -1,6 +1,7 @@
 export interface ShippingConfig {
     method: string;
     parcelLimit: number;
+    roundThreshold?: number;
     flatRateAmount: number;
 }
 export interface ShippingPriceConfig {

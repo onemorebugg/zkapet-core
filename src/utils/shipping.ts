@@ -1,6 +1,7 @@
 export interface ShippingConfig {
     method: string; // 'region_parcel' | 'zkapet_custom' | 'flat_rate'
     parcelLimit: number;
+    roundThreshold?: number; // Threshold to round a partial parcel up to a full one
     flatRateAmount: number;
 }
 
@@ -99,16 +100,28 @@ export const calculateShippingFeeCore = (
         let isMinFeeApplied = false;
 
         if (config.method === 'region_parcel') {
-            fullParcels = Math.floor(mass / config.parcelLimit);
-            remainder = mass % config.parcelLimit;
+            const standardMass = config.parcelLimit || 30;
+            const threshold = config.roundThreshold || standardMass;
 
-            fee = fullParcels * unitPrice;
-            count = fullParcels;
+            fullParcels = Math.floor(mass / standardMass);
+            remainder = mass % standardMass;
+
+            let additionalFull = 0;
+            let partialParcels = 0;
 
             if (remainder > 0) {
-                fee += unitPrice + surcharge;
-                count += 1;
+                if (remainder >= threshold) {
+                    additionalFull = 1;
+                } else {
+                    partialParcels = 1;
+                }
             }
+
+            fee = (fullParcels + additionalFull) * unitPrice + (partialParcels * (unitPrice + surcharge));
+            count = fullParcels + additionalFull + partialParcels;
+            
+            // For detail reporting
+            fullParcels = fullParcels + additionalFull;
         } else if (config.method === 'zkapet_custom') {
             const calculatedFee = mass * unitPrice;
             if (calculatedFee < surcharge) {

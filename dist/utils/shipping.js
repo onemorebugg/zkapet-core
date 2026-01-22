@@ -47,14 +47,24 @@ const calculateShippingFeeCore = (config, priceConfigs, items, regionId) => {
         let remainder = 0;
         let isMinFeeApplied = false;
         if (config.method === 'region_parcel') {
-            fullParcels = Math.floor(mass / config.parcelLimit);
-            remainder = mass % config.parcelLimit;
-            fee = fullParcels * unitPrice;
-            count = fullParcels;
+            const standardMass = config.parcelLimit || 30;
+            const threshold = config.roundThreshold || standardMass;
+            fullParcels = Math.floor(mass / standardMass);
+            remainder = mass % standardMass;
+            let additionalFull = 0;
+            let partialParcels = 0;
             if (remainder > 0) {
-                fee += unitPrice + surcharge;
-                count += 1;
+                if (remainder >= threshold) {
+                    additionalFull = 1;
+                }
+                else {
+                    partialParcels = 1;
+                }
             }
+            fee = (fullParcels + additionalFull) * unitPrice + (partialParcels * (unitPrice + surcharge));
+            count = fullParcels + additionalFull + partialParcels;
+            // For detail reporting
+            fullParcels = fullParcels + additionalFull;
         }
         else if (config.method === 'zkapet_custom') {
             const calculatedFee = mass * unitPrice;
